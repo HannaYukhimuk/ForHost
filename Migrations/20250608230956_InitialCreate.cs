@@ -15,10 +15,10 @@ namespace MyPresentationApp.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Nickname = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    SocketId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CurrentPresentationId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Nickname = table.Column<string>(type: "text", nullable: true),
+                    SocketId = table.Column<string>(type: "text", nullable: true),
+                    CurrentPresentationId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,11 +29,11 @@ namespace MyPresentationApp.Migrations
                 name: "Presentations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CurrentSlideId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: true),
+                    CurrentSlideId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -49,9 +49,9 @@ namespace MyPresentationApp.Migrations
                 name: "PresentationUsers",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PresentationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    PresentationId = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,11 +74,11 @@ namespace MyPresentationApp.Migrations
                 name: "Slides",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PresentationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    Background = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Animation = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    PresentationId = table.Column<string>(type: "text", nullable: true),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Background = table.Column<string>(type: "text", nullable: true),
+                    Animation = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,22 +94,22 @@ namespace MyPresentationApp.Migrations
                 name: "SlideElements",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SlideId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    ZIndex = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FillColor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BorderColor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BorderWidth = table.Column<int>(type: "int", nullable: false),
-                    PositionX = table.Column<int>(type: "int", nullable: false),
-                    PositionY = table.Column<int>(type: "int", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    FontStyle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FontWeight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FontSize = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    SlideId = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    ZIndex = table.Column<int>(type: "integer", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Color = table.Column<string>(type: "text", nullable: false),
+                    FillColor = table.Column<string>(type: "text", nullable: false),
+                    BorderColor = table.Column<string>(type: "text", nullable: false),
+                    BorderWidth = table.Column<int>(type: "integer", nullable: false),
+                    PositionX = table.Column<int>(type: "integer", nullable: false),
+                    PositionY = table.Column<int>(type: "integer", nullable: false),
+                    Width = table.Column<int>(type: "integer", nullable: false),
+                    Height = table.Column<int>(type: "integer", nullable: false),
+                    FontStyle = table.Column<string>(type: "text", nullable: false),
+                    FontWeight = table.Column<string>(type: "text", nullable: false),
+                    FontSize = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,8 +146,7 @@ namespace MyPresentationApp.Migrations
                 name: "IX_Users_Nickname",
                 table: "Users",
                 column: "Nickname",
-                unique: true,
-                filter: "[Nickname] IS NOT NULL");
+                unique: true);
         }
 
         /// <inheritdoc />
