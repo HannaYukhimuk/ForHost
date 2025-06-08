@@ -1,0 +1,272 @@
+@model Presentation
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var currentSlideId = ViewBag.CurrentSlideId as string ?? Model.Slides.OrderBy(s => s.Order).FirstOrDefault()?.Id;
+    var userRole = ViewBag.UserRole as UserRole? ?? UserRole.Creator;
+    var isCreator = ViewBag.IsCreator as bool? ?? false;
+    var isEditor = ViewBag.IsEditor as bool? ?? false;
+}
+
+
+
+<div class="presentation-container">
+    <!-- Top Toolbar -->
+    <!-- Top Toolbar -->
+<div class="toolbar bg-light p-2 mb-3">
+    @if (isEditor || isCreator)
+    {
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTextModal">
+            Add Text
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addShapeModal">
+            Add Shape
+        </button>
+    }
+    <button class="btn btn-sm btn-success float-end">Present</button>
+</div>
+
+
+    <div class="row">
+        <!-- Left Slides Panel -->
+        <div class="col-md-2">
+            <div class="list-group" id="slidesList">
+                @foreach (var slide in Model.Slides.OrderBy(s => s.Order))
+                {
+                    <div class="list-group-item d-flex justify-content-between align-items-center @(slide.Id == currentSlideId ? "active" : "")" 
+                         data-slide-order="@slide.Order" data-slide-id="@slide.Id">
+                        <span>Slide @slide.Order</span>
+                        <button class="btn btn-sm btn-outline-danger delete-slide-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteSlideModal"
+                                data-slide-id="@slide.Id"
+                                @(isEditor || isCreator ? "" : "disabled")>
+                            ×
+                        </button>
+                    </div>
+                }
+                @if (isEditor || isCreator)
+                {
+                    <form class="mt-2">
+                        <input type="hidden" id="presentationId" value="@Model.Id" />
+                        <button type="button" class="btn btn-sm btn-primary w-100" id="addSlideBtn">+ Add Slide</button>
+                    </form>
+                }             
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="slide-canvas border p-4" style="height: 70vh; overflow: auto; position: relative;" id="slideCanvas">
+                @foreach (var element in Model.Slides.FirstOrDefault(s => s.Id == currentSlideId)?.Elements ?? new List<SlideElement>())
+                {
+                    <div class="slide-element" 
+                         data-element-id="@element.Id"
+                         style="position: absolute; 
+                                left: @(element.PositionX)px; 
+                                top: @(element.PositionY)px;
+                                width: @(element.Width)px;
+                                height: @(element.Height)px;">
+                        @if (element.Type == ElementType.Text)
+                        {
+                            <div contenteditable="true" 
+                                 style="color: @element.Color;
+                                        font-size: @(element.FontSize)px;
+                                        font-style: @(element.FontStyle);
+                                        font-weight: @(element.FontWeight);
+                                        width: 100%;
+                                        height: 100%;
+                                        padding: 8px;
+                                        cursor: move;">
+                                @element.Content
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            
+            <div class="d-flex justify-content-between mt-2">
+                <button class="btn btn-outline-primary" id="prevSlideBtn">Previous</button>
+                <button class="btn btn-outline-primary" id="nextSlideBtn">Next</button>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <h5>Users</h5>
+            <ul class="list-group">
+                @if (isEditor || isCreator)
+                {
+                    @foreach (var user in Model.Users)
+                    {
+                        <li class="list-group-item">
+                            @user.User.Nickname
+                            <span class="badge bg-secondary float-end">@user.Role</span>
+                            @if (isCreator && user.Role == UserRole.Viewer)
+                            {
+                                <button class="btn btn-sm btn-success promote-btn" 
+                                        data-user-id="@user.UserId" 
+                                        data-presentation-id="@Model.Id">
+                                    Promote
+                                </button>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="deleteSlideModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Slide</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this slide?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="addTextModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Text</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Text Content</label>
+                    <textarea class="form-control" id="textContent" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Text Color</label>
+                    <input type="color" class="form-control form-control-color" id="textColor" value="#000000">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Font Style</label>
+                    <select class="form-select" id="textFontStyle">
+                        <option value="normal">Normal</option>
+                        <option value="italic">Italic</option>
+                        <option value="bold">Bold</option>
+                        <option value="bold italic">Bold Italic</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Font Size (px)</label>
+                    <input type="number" class="form-control" id="textFontSize" value="16" min="8" max="72">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAddText">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="addShapeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Shape</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Shape Type</label>
+                    <select class="form-select" id="shapeType">
+                        <option value="rectangle">Rectangle</option>
+                        <option value="circle">Circle</option>
+                        <option value="triangle">Triangle</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Fill Color</label>
+                    <input type="color" class="form-control form-control-color" id="shapeFillColor" value="#ffffff">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Border Color</label>
+                    <input type="color" class="form-control form-control-color" id="shapeBorderColor" value="#000000">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Border Width (px)</label>
+                    <input type="number" class="form-control" id="shapeBorderWidth" value="1" min="0" max="10">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Width (px)</label>
+                    <input type="number" class="form-control" id="shapeWidth" value="100" min="20" max="500">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Height (px)</label>
+                    <input type="number" class="form-control" id="shapeHeight" value="100" min="20" max="500">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmAddShape">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div id="elementContextMenu" class="dropdown-menu shadow" style="display: none; position: absolute;">
+    <button class="dropdown-item" id="deleteElementBtn">Delete</button>
+    <div class="dropdown-divider"></div>
+    <button class="dropdown-item" id="bringTextToFrontBtn">Bring to Front</button>
+    <div class="dropdown-divider"></div>
+    <div class="px-3 py-1">
+        <label class="form-label small">Font Size</label>
+        <input type="range" class="form-range" id="fontSizeSlider" min="8" max="72" value="16">
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="px-3 py-1">
+        <label class="form-label small">Font Style</label>
+        <select class="form-select form-select-sm" id="fontStyleSelect">
+            <option value="normal">Normal</option>
+            <option value="italic">Italic</option>
+            <option value="bold">Bold</option>
+            <option value="bold italic">Bold Italic</option>
+        </select>
+    </div>
+</div>
+
+<div id="shapeContextMenu" class="dropdown-menu shadow" style="display: none; position: absolute;">
+    <button class="dropdown-item" id="deleteShapeBtn">Delete</button>
+    <div class="dropdown-divider"></div>
+    <button class="dropdown-item" id="bringToFrontBtn">Bring to Front</button>
+    <div class="dropdown-divider"></div>
+    <div class="px-3 py-1">
+        <label class="form-label small">Fill Color</label>
+        <input type="color" class="form-control form-control-color" id="shapeFillColorPicker" value="#ffffff">
+    </div>
+    <div class="px-3 py-1">
+        <label class="form-label small">Border Color</label>
+        <input type="color" class="form-control form-control-color" id="shapeBorderColorPicker" value="#000000">
+    </div>
+</div>
+
+<input type="hidden" id="__RequestVerificationToken" value="@token" />
+<input type="hidden" id="currentSlideId" value="@currentSlideId" />
+
+@section Scripts {
+
+    <script src="~/js/main.js"></script>
+    <script src="~/js/slide-navigation.js"></script>
+    <script src="~/js/slide-loader.js"></script>
+    <script src="~/js/drag-and-drop.js"></script>
+    <script src="~/js/text-element.js"></script>
+    <script src="~/js/slide-management.js"></script>
+    <script src="~/js/context-menu.js"></script>
+    <script src="~/js/shape-element.js"></script>
+    <script src="~/js/utils.js"></script>
+
+
+}

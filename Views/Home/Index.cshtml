@@ -1,0 +1,57 @@
+﻿@model List<Presentation>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>Available Presentations</h2>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+        <div class="mb-3">
+            <label class="form-label">Enter Your Nickname</label>
+            <input type="text" class="form-control" id="nicknameInput" required>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Created By</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var presentation in Model)
+                {
+                    <tr>
+                        <td>@presentation.Title</td>
+                        <td>@presentation.CreatedBy?.Nickname</td>
+                        <td>@presentation.CreatedAt.ToString("g")</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm join-btn" 
+                                    data-presentation-id="@presentation.Id">
+                                Join
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-btn" 
+                                    data-presentation-id="@presentation.Id">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Create New</h5>
+                <a href="@Url.Action("Create")" class="btn btn-success">Create Presentation</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/del-pres.js"></script>
+}

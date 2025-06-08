@@ -1,0 +1,86 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+
+.slide-canvas {
+    background-color: #f8f9fa;
+    position: relative;
+
+    border: 1px solid #ccc;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.slide-element {
+    cursor: move;
+}
+
+.toolbar {
+    border-bottom: 1px solid #dee2e6;
+}
+
+
+
+
+
+
+
+
+
+
+
+.slide-element div[contenteditable="true"] {
+  padding: 2px;
+  box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    min-width: max-content;
+}
+
+
+.slide-element div[contenteditable="true"]:hover {
+    border-color: #ccc;
+}
+
+.slide-element div[contenteditable="true"]:focus {
+    border: 1px dashed #999;
+    outline: none;
+}
+
+
+.slide-element {
+    box-sizing: border-box;
+  
+}
+
