@@ -95,17 +95,21 @@ namespace MyPresentationApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    SlideId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SlideId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
+                    ZIndex = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PositionX = table.Column<double>(type: "float", nullable: false),
-                    PositionY = table.Column<double>(type: "float", nullable: false),
-                    Width = table.Column<double>(type: "float", nullable: true),
-                    Height = table.Column<double>(type: "float", nullable: true),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rotation = table.Column<double>(type: "float", nullable: true),
-                    CreatedById = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastEdited = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FillColor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BorderColor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BorderWidth = table.Column<int>(type: "int", nullable: false),
+                    PositionX = table.Column<int>(type: "int", nullable: false),
+                    PositionY = table.Column<int>(type: "int", nullable: false),
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    FontStyle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FontWeight = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FontSize = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,7 +118,8 @@ namespace MyPresentationApp.Migrations
                         name: "FK_SlideElements_Slides_SlideId",
                         column: x => x.SlideId,
                         principalTable: "Slides",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
