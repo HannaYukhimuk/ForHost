@@ -70,7 +70,7 @@ string GetConnectionString(IConfiguration config)
     var dbPassword = config["DB_PASSWORD"];
     
     // Логирование для отладки (удалите в продакшене)
-    Console.WriteLine($"Connecting to: Host=dpg-d12v1595pdvs73d66el0-a;Port=5432;Database=mypresentationapp;Username=mypresentationapp_user");
+    Console.WriteLine($"Connecting to: Host=dpg-d12v1595pdvs73d66el0-a;Port=5432;Database=mypresentationapp;Username=mypresentationapp_user;Password=lCffOnccXPY8OLUyJRawGr4Hq56sUgX9");
     
     return $"Host=dpg-d12v1595pdvs73d66el0-a;Port=5432;Database=mypresentationapp;Username=mypresentationapp_user";
 }
