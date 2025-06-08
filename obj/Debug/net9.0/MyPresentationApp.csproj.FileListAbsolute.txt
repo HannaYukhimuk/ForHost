@@ -534,4 +534,4 @@ C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\obj\Debug\net9.0\refint\MyPresen
 C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\obj\Debug\net9.0\MyPresentationApp.pdb
 C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\obj\Debug\net9.0\MyPresentationApp.genruntimeconfig.cache
 C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\obj\Debug\net9.0\ref\MyPresentationApp.dll
-C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\obj\Debug\net9.0\compressed\5vjy50aj8f-c15m2923tk.gz
+C:\Users\user\Desktop\aaaaaaa\MyPresentationApp\bin\Debug\net9.0\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
