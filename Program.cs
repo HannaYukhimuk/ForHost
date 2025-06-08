@@ -25,9 +25,14 @@ builder.Services.AddScoped<PresentationService>();
 builder.Services.AddScoped<ElementService>();
 builder.Services.AddScoped<SlideService>();
 
+
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
